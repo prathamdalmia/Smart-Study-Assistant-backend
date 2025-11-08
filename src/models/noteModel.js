@@ -20,7 +20,7 @@ const noteSchema = new mongoose.Schema({
     filePath  : {
         type : String,
         trim : true,
-        required : true
+        required : false
     },
     
 
