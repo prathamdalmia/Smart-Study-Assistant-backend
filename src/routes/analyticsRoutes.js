@@ -5,5 +5,6 @@ const analyticsController = require("../controllers/analyticsController");
 
 router.use(protect);
 router.get("/", analyticsController.getAnalytics);
+router.post("/study-time", analyticsController.updateStudyTime);
 
 module.exports = router;
