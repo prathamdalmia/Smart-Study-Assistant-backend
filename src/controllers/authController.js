@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const Student = require("../models/studentModel");
+const Admin = require("../models/adminModel");
 const { generateToken } = require("../utils/jwt");
 const { sendMail } = require("../utils/emailService");
 
@@ -23,7 +24,22 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { emailOrUsername, password } = req.body;
+    const { emailOrUsername, password, isAdmin } = req.body;
+    
+    // Admin login
+    if (isAdmin) {
+      const admin = await Admin.findOne({ email: emailOrUsername });
+      if (!admin) return res.status(401).json({ message: "Invalid credentials" });
+
+      const match = await bcrypt.compare(password, admin.password);
+      if (!match) return res.status(401).json({ message: "Invalid credentials" });
+
+      const token = generateToken(admin._id, "admin");
+      res.json({ token, admin, isAdmin: true });
+      return;
+    }
+    
+    // Student login
     const student = await Student.findOne({
       $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
     });

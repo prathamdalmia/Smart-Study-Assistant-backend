@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
+const { protectAdmin } = require("../middleware/authMiddleware");
 
+router.use(protectAdmin);
 router.get("/students", adminController.getAllStudents);
 router.delete("/students/:id", adminController.deleteStudent);
 
